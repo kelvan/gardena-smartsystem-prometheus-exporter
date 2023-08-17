@@ -1,0 +1,9 @@
+env/
+*.pyc
+__pycache__/
+config.yaml
+config.json
+.ruff_cache/
+mypy_cache/
+.envrc
+.vscode
