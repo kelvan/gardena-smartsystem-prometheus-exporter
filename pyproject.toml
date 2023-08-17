@@ -1,0 +1,87 @@
+[tool.black]
+line-length = 120
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.pytest_cache
+  | \.ruff_cache
+  | \.tox
+  | \.venv
+  | env
+  | venv
+  | docs
+  | _skbuild
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "hug"
+src_paths = ["gardena_smartsystem_prometheus_exporter"]
+skip = ["env", "venv"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+show_error_codes = true
+exclude = ["env", "venv"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+select = ["E", "F", "W", "A", "B", "N", "UP", "T", "PL", "RUF"]
+ignore = ["PLC1901", "PLR0913", "PLR2004", "PLW2901", "N805", "N999", "A001"]
+
+exclude = [
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "venv",
+    "env",
+    "docs",
+    "dist",
+    "build",
+    ".pytest_cache",
+    ".mypy_cache",
+]
+per-file-ignores = {}
+
+[tool.poetry]
+name = "gardena-smartsystem-prometheus-exporter"
+version = "0.1.0"
+description = ""
+authors = ["Florian Schweikert <kelvan@ist-total.org>"]
+readme = "README.md"
+packages = [{include = "gardena_smartsystem_prometheus_exporter"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.12"
+confz = "^2.0.0"
+prometheus-client = "^0.17.1"
+uvicorn = "^0.23.1"
+aiohttp = "^3.8.4"
+cffi = "^1.15.1"
+websockets = "^11.0.3"
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.14.0"
+ruff = "^0.0.278"
+mypy = "^1.4.1"
+black = "^23.7.0"
+isort = "^5.12.0"
+types-requests = "^2.31.0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

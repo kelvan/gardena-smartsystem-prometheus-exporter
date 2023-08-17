@@ -1,0 +1,47 @@
+image: python:3.11
+
+stages:
+  - install
+  - qa
+
+.install:
+  stage: install
+  before_script:
+    - python -m venv .venv
+    - source .venv/bin/activate
+    - pip install -U wheel pip setuptools poetry
+  script:
+    - poetry install --with dev
+  artifacts:
+    expire_in: 1 day
+    untracked: true
+
+install:python3.9:
+  extends: .install
+  image: python:3.9
+
+install:python3.10:
+  extends: .install
+  image: python:3.10
+
+install:python3.11:
+  extends: .install
+  image: python:3.11
+
+ruff:
+  stage: qa
+  script:
+    - source .venv/bin/activate
+    - ruff .
+  allow_failure: true
+  dependencies:
+    - install:python3.11
+
+mypy:
+  stage: qa
+  script:
+    - source .venv/bin/activate
+    - mypy .
+  allow_failure: true
+  dependencies:
+    - install:python3.11

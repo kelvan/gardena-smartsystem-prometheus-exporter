@@ -1,0 +1,3 @@
+auth:
+  client_id: <insert application key from developer portal app>
+  client_secret: <insert application secret from developer portal app>
