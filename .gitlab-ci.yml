@@ -14,8 +14,7 @@ stages:
     - poetry install --with dev
   artifacts:
     expire_in: 1 day
-    paths:
-      - .venv
+    untracked: true
 
 install:python3.9:
   extends: .install
