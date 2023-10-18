@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Literal, cast
+from typing import Literal, Optional, cast
 from uuid import UUID
 
 from confz import BaseConfig, EnvSource, FileSource
@@ -9,11 +9,19 @@ from pydantic import Field, HttpUrl, SecretStr
 LOGLEVEL = Literal["CRITICAL", "FATAL", "ERROR", "WARNING", "WARN", "INFO", "DEBUG", "NOTSET"]
 
 
+class LogFile(BaseConfig):  # type: ignore[misc]
+    file_name: Optional[str] = None
+    rotate: bool = True
+    rotate_max_bytes: int = 5242880
+    rotate_backup_count: int = 4
+
+
 class Log(BaseConfig):  # type: ignore[misc]
     log_level: LOGLEVEL = "INFO"
     log_format: str = "[%(levelname)s] [%(asctime)s]: %(message)s"
+    log_file: LogFile
 
-    CONFIG_SOURCES = EnvSource(prefix="SGPE_", allow_all=True)
+    CONFIG_SOURCES = EnvSource(prefix="SGPE_", allow_all=True, file=".env")
 
 
 class DeviceValue(BaseConfig):  # type: ignore[misc]
