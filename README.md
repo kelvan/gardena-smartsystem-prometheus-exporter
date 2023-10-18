@@ -4,7 +4,7 @@ Access Gardena Smartsystem device values in prometheus format
 
 # Disclaimer
 
-This is not an official Gardena project, use own your own risk!
+This is not an official Gardena project, use at your own risk!
 
 ## Getting Started
 
