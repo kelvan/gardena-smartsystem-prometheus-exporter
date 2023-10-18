@@ -21,7 +21,8 @@ to overwrite the path to the config set the environment variable `SGPE_CONFIG_FI
 While the example is a yaml file, json is also supported.
 
 For more settings (logging, ...) see [config.py](gardena_smartsystem_prometheus_exporter/config.py)
-Example to set the log level use `SGPE_LOG_LEVEL`
+
+For example to set the log level use `SGPE_LOG_LEVEL`
 
 **Beware:** nested parameters like `SGPE_LOG_FILE.FILENAME` probably won't work when set using `export`,
 defining them in .env or as docker env should work.
