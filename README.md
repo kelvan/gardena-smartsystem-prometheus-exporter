@@ -1,4 +1,4 @@
-# device values prometheus exporter
+# gardena smartsystem prometheus exporter
 
 Access Gardena Smartsystem device values in prometheus format
 
@@ -8,13 +8,10 @@ This is not an official Gardena project, use own your own risk!
 
 ## Getting Started
 
-1.  python3.10 -m venv env
-2.  . env/bin/activate
-3.  pip install -U poetry
-4.  poetry install --no-root --with dev
-5.  cp config.yaml.example config.yaml
-6.  # edit config.yaml
-7.  uvicorn gardena_smartsystem_prometheus_exporter.serve:app
+1.  poetry install --no-root --with dev
+2.  cp config.yaml.example config.yaml
+3.  edit config.yaml
+4.  poetry run uvicorn gardena_smartsystem_prometheus_exporter.serve:app
 
 
 ## Config
