@@ -1,4 +1,5 @@
 import json
+from asyncio import sleep
 from typing import cast
 
 import aiohttp
@@ -31,11 +32,23 @@ async def get_websocket_uri() -> str:
             }
         }
     )
+    logger.info("Get websocket url")
+
     async with aiohttp.ClientSession() as session:
-        r = await session.post(url, headers=headers, data=payload)
-        r.raise_for_status()
-        j = await r.json()
-    return cast(str, j["data"]["attributes"]["url"])
+        retries = 3
+        for retry in range(1, retries + 1):
+            try:
+                r = await session.post(url, headers=headers, data=payload, raise_for_status=True)
+                j = await r.json()
+                return cast(str, j["data"]["attributes"]["url"])
+            except aiohttp.ClientError as e:
+                if retry < retries:
+                    logger.warning(f"({retry}/{retries}) Error getting websocket url: {e}")
+                    logger.info("Wait for 5 seconds")
+                    await sleep(5)
+                else:
+                    raise e
+    return "this should be unreachable"
 
 
 def get_device_values() -> dict[str, dict[str, list[tuple[str, dict[str, str]]]]]:
@@ -58,6 +71,7 @@ async def handle_websocket(metric):
 
     while True:
         websocket_uri = await get_websocket_uri()
+        logger.info("Connecting to Websocket")
         async with websockets.connect(websocket_uri) as websocket:
             logger.info(f"Connected to WebSocket server at {websocket_uri}")
 
@@ -95,3 +109,4 @@ async def handle_websocket(metric):
 
             except websockets.ConnectionClosed:
                 logger.info("WebSocket connection closed")
+                await sleep(5)
