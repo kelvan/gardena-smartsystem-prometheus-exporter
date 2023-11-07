@@ -1,4 +1,5 @@
 import os
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Literal, Optional, cast
 from uuid import UUID
@@ -47,6 +48,14 @@ class LocationAuth(BaseConfig):  # type: ignore[misc]
 class Location(BaseConfig):  # type: ignore[misc]
     auth: LocationAuth
     device_values: list[DeviceValues]
-    extra_labels: list[str] = Field(default_factory=list)
+
+    @property
+    def extra_labels(self) -> Iterable[str]:
+        labels: set[str] = set()
+
+        for device_value in Location().device_values:
+            for value in device_value.values:
+                labels.update(value.extra_labels.keys())
+        return labels
 
     CONFIG_SOURCES = FileSource(file=os.environ.get("SGPE_CONFIG_FILE", Path(__file__).parents[1] / "config.yaml"))
