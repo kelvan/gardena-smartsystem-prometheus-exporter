@@ -1,6 +1,6 @@
 import json
 from asyncio import sleep
-from typing import cast
+from typing import Optional, cast
 
 import aiohttp
 import websockets
@@ -48,26 +48,15 @@ async def get_websocket_uri() -> str:
                     await sleep(5)
                 else:
                     raise e
-    return "this should be unreachable"
+    raise BaseException("this should be unreachable")
 
 
-def get_device_values() -> dict[str, dict[str, list[tuple[str, dict[str, str]]]]]:
-    device_values: dict[str, dict[str, list[tuple[str, dict[str, str]]]]] = {}
-    for location in Location().device_values:
-        device_id = str(location.device_id)
-        device_values[device_id] = {}
-        for device_value in location.values:
-            if device_value.service_type not in device_values[device_id]:
-                device_values[device_id][device_value.service_type] = []
-            device_values[device_id][device_value.service_type].append(
-                (device_value.attribute, device_value.extra_labels)
-            )
-    return device_values
-
-
-async def handle_websocket(metric):
-    device_values = get_device_values()
+async def handle_websocket(metric) -> None:
+    # device_values = get_device_values()
     location = Location()
+    location_id = None
+    label_values: dict[str, Optional[dict[str, str]]] = {}
+    service_types: dict[str, list[str]] = {}
 
     while True:
         websocket_uri = await get_websocket_uri()
@@ -83,29 +72,58 @@ async def handle_websocket(metric):
                     device_id = j.get("id")
                     service_type = j.get("type")
 
-                    if device_id in device_values and service_type in device_values[device_id]:
+                    if service_type == "LOCATION":
+                        location_id = device_id
+                    elif service_type == "DEVICE":
+                        service_types[device_id] = [
+                            data.get("type")
+                            for data in j.get("relationships", {}).get("services", {}).get("data", [])
+                            if data.get("type")
+                        ]
+                    elif service_type in service_types.get(device_id, []):
                         values = j.get("attributes", {})
                         logger.debug(f"Available {service_type} resources for {device_id}: {list(values.keys())}")
-                        for attribute, extra_label_values in device_values[device_id][service_type]:
-                            value = values.get(attribute, {}).get("value")
-                            if value is not None:
+
+                        if service_type == "COMMON":
+                            new_labels = {
+                                label: values.get(label, {}).get("value") for label in location.common_labels
+                            }
+                            if label_values.get(device_id) != new_labels:
+                                if label_values.get(device_id):
+                                    # this should only be happening if a device gets renamed
+                                    # clear metric and reconnect to websocket
+
+                                    logger.info(f"Common {device_id} attributes changed from {label_values[device_id]} to {new_labels}")
+                                    label_values[device_id] = new_labels
+                                    logger.info("Clearing metric")
+                                    metric.clear()
+                                    logger.info("Closing websocket")
+                                    await websocket.close()
+                                else:
+                                    label_values[device_id] = new_labels
+
+                        for attribute, data in values.items():
+                            if device_id not in label_values:
+                                logger.warning(f"No labels discovered yet for device: {device_id}")
+                                continue
+
+                            value = data.get("value")
+                            if isinstance(value, (int, float)):
                                 try:
                                     value = float(value)
                                     logger.info(f"{device_id}/{service_type}/{attribute} -> {value}")
-                                    extra_labels = {
-                                        label: extra_label_values.get(label, "") for label in location.extra_labels
-                                    }
                                     metric.labels(
                                         username=location.auth.username,
+                                        location_id=location_id,
                                         device_id=device_id,
                                         type=service_type,
                                         attribute=attribute,
-                                        **extra_labels,
+                                        **label_values[device_id],
                                     ).set(value)
                                 except ValueError as e:
                                     logger.error(f"{attribute}: {e}")
-                            else:
-                                logger.warning(f"Missing value for {device_id}/{service_type}/{attribute}")
+                            elif value is None:
+                                logger.warning(f"Missing value for {device_id}/{service_type}/{attribute} -> {value}")
 
             except websockets.ConnectionClosed:
                 logger.info("WebSocket connection closed")

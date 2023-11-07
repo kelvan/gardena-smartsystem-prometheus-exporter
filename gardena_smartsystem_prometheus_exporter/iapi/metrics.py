@@ -11,7 +11,14 @@ async def collect():
     metric = Gauge(
         "sg_device_attribute_value",
         "Value of device attributes",
-        ["username", "device_id", "type", "attribute", *Location().extra_labels],
+        [
+            "username",
+            "location_id",
+            "device_id",
+            "type",
+            "attribute",
+            *Location().common_labels,
+        ],
     )
 
     logger.info("Initial collect")
