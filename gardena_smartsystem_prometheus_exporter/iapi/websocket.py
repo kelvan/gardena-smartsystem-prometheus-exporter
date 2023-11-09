@@ -1,6 +1,6 @@
 import json
 from asyncio import sleep
-from typing import Optional, cast
+from typing import cast
 
 import aiohttp
 import websockets
@@ -8,6 +8,7 @@ import websockets
 from ..config import Location
 from ..log import get_logger
 from .accounts import AccountStore
+from .values import get_common_values
 
 base_url = Location().auth.api_base_url
 logger = get_logger()
@@ -55,10 +56,10 @@ async def handle_websocket(metric) -> None:
     # device_values = get_device_values()
     location = Location()
     location_id = None
-    label_values: dict[str, Optional[dict[str, str]]] = {}
     service_types: dict[str, list[str]] = {}
 
     while True:
+        label_values = await get_common_values()
         websocket_uri = await get_websocket_uri()
         logger.info("Connecting to Websocket")
         async with websockets.connect(websocket_uri) as websocket:
@@ -85,15 +86,16 @@ async def handle_websocket(metric) -> None:
                         logger.debug(f"Available {service_type} resources for {device_id}: {list(values.keys())}")
 
                         if service_type == "COMMON":
-                            new_labels = {
-                                label: values.get(label, {}).get("value") for label in location.common_labels
-                            }
+                            new_labels = {label: values.get(label, {}).get("value") for label in location.common_labels}
                             if label_values.get(device_id) != new_labels:
                                 if label_values.get(device_id):
                                     # this should only be happening if a device gets renamed
                                     # clear metric and reconnect to websocket
 
-                                    logger.info(f"Common {device_id} attributes changed from {label_values[device_id]} to {new_labels}")
+                                    logger.info(
+                                        f"Common {device_id} attributes changed "
+                                        f"from {label_values[device_id]} to {new_labels}"
+                                    )
                                     label_values[device_id] = new_labels
                                     logger.info("Clearing metric")
                                     metric.clear()
