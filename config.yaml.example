@@ -1,42 +1,5 @@
 auth:
-  api_base_url: <set to api base url or remove line to use default environment (QA)>
-  auth_url: <set to api auth url or remove line to use default environment (QA)>
   username: <insert username>
   password: <insert password>
   client_id: <insert client_id>
   api_key: <insert api_key>
-
-device_values:
-  - device_id: <insert device_id>
-    values:
-      - type: COMMON
-        attribute: batteryLevel
-        extra_labels:
-            model: Sensor2
-            # set values of defined extra labels
-      - type: SENSOR
-        attribute: soilHumidity
-        extra_labels:
-            model: Sensor2
-      - type: SENSOR
-        attribute: soilTemperature
-        extra_labels:
-            model: Sensor2
-  - device_id: <insert device_id>
-    values:
-        - type: COMMON
-          attribute: batteryLevel
-          extra_labels:
-            model: Sensor1
-        - type: SENSOR
-          attribute: soilHumidity
-          extra_labels:
-            model: Sensor1
-        - type: SENSOR
-          attribute: soilTemperature
-          extra_labels:
-            model: Sensor1
-
-extra_labels:
-  - model
-  # define your extra labels here
