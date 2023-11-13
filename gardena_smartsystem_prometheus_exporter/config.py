@@ -18,7 +18,7 @@ class LogFile(BaseConfig):  # type: ignore[misc]
 class Log(BaseConfig):  # type: ignore[misc]
     log_level: LOGLEVEL = "INFO"
     log_format: str = "[%(levelname)s] [%(asctime)s]: %(message)s"
-    log_file: LogFile
+    log_file: LogFile = LogFile()
 
     CONFIG_SOURCES = EnvSource(prefix="SGPE_", allow_all=True, file=".env")
 
