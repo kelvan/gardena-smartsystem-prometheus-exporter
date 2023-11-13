@@ -1,0 +1,13 @@
+[Unit]
+Description=Gardena Smartsystem Prometheus Exporter
+
+[Service]
+ExecStart=/user/bin/poetry run uvicorn gardena_smartsystem_prometheus_exporter.serve:app
+WorkingDirectory=/path/to/gardena-smartsystem-prometheus-exporter
+Restart=on-failure
+RestartSec=10
+RestartSteps=5
+RestartMaxDelaySec=60
+
+[Install]
+WantedBy=multi-user.target
