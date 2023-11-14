@@ -12,7 +12,7 @@ async def collect():
         "sg_device_attribute_value",
         "Value of device attributes",
         [
-            "username",
+            "user_id",
             "location_id",
             "device_id",
             "type",

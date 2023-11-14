@@ -14,7 +14,7 @@ async def get_common_values() -> dict[str, dict[str, str]]:
     account = await AccountStore.get()
     url = f"{base_url}/locations/{account.location_id}"
 
-    headers = {"authorization": f"Bearer {account.token}", "X-Api-Key": account.api_key}
+    headers = {"authorization": f"Bearer {account.token}", "X-Api-Key": account.client_id}
 
     label_values: dict[str, dict[str, str]] = {}
 

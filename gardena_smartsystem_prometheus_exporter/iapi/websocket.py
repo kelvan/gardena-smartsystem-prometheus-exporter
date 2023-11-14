@@ -20,7 +20,7 @@ async def get_websocket_uri() -> str:
 
     headers = {
         "authorization": f"Bearer {account.token}",
-        "X-Api-Key": account.api_key,
+        "X-Api-Key": account.client_id,
         "Authorization-Provider": "husqvarna",
         "Content-Type": "application/vnd.api+json",
     }
@@ -55,6 +55,8 @@ async def get_websocket_uri() -> str:
 async def handle_websocket(metric) -> None:
     # device_values = get_device_values()
     location = Location()
+    account = await AccountStore.get()
+    user_id = account.user_id
     location_id = None
     service_types: dict[str, list[str]] = {}
 
@@ -115,7 +117,7 @@ async def handle_websocket(metric) -> None:
                                     value = float(value)
                                     logger.info(f"{device_id}/{service_type}/{attribute} -> {value}")
                                     metric.labels(
-                                        username=location.auth.username,
+                                        user_id=user_id,
                                         location_id=location_id,
                                         device_id=device_id,
                                         type=service_type,
