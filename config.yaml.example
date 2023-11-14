@@ -1,5 +1,3 @@
 auth:
-  username: <insert username>
-  password: <insert password>
-  client_id: <insert client_id>
-  api_key: <insert api_key>
+  client_id: <insert application key from developer portal app>
+  client_secret: <insert application secret from developer portal app>

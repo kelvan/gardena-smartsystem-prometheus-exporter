@@ -25,11 +25,9 @@ class Log(BaseConfig):  # type: ignore[misc]
 
 class LocationAuth(BaseConfig):  # type: ignore[misc]
     api_base_url: HttpUrl = cast(HttpUrl, "https://api.smart.gardena.dev/v1")
-    auth_url: HttpUrl = cast(HttpUrl, "https://iam-api.dss.husqvarnagroup.net/api/v3/oauth2/token")
-    username: str
-    password: SecretStr
+    auth_url: HttpUrl = cast(HttpUrl, "https://api.authentication.husqvarnagroup.dev/v1/oauth2/token")
     client_id: str
-    api_key: SecretStr
+    client_secret: SecretStr
 
 
 class Location(BaseConfig):  # type: ignore[misc]

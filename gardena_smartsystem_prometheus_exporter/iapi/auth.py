@@ -9,19 +9,18 @@ url = str(Location().auth.auth_url)
 logger = get_logger()
 
 
-async def get_token(username: str, password: str, client_id: str) -> dict:
+async def get_token(client_id: str, client_secret: str) -> dict:
     params = {
-        "grant_type": "password",
-        "username": username,
-        "password": password,
+        "grant_type": "client_credentials",
         "client_id": client_id,
+        "client_secret": client_secret,
     }
     headers = {
         "Content-Type": "application/x-www-form-urlencoded",
         "Accept": "application/json",
         "Cache-Control": "no-cache",
     }
-    logger.info(f"Get token for user: {username}")
+    logger.info(f"Get token for client_id: {client_id}")
 
     async with aiohttp.ClientSession() as session:
         r = await session.post(url, headers=headers, data=params)

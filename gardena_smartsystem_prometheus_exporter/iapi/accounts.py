@@ -12,14 +12,12 @@ logger = get_logger()
 
 @dataclass
 class Account:
-    username: str
-    password: str
+    user_id: str
     location_id: str
     client_id: str
-    api_key: str
+    client_secret: str
     token: str
     expires: datetime
-    refresh_token: str
 
 
 class AccountStore:
@@ -34,24 +32,21 @@ class AccountStore:
     @classmethod
     async def populate(cls) -> Account:
         location = Location().auth
-        logger.info(f"Log in user {location.username}")
-        password = location.password.get_secret_value()
-        api_key = location.api_key.get_secret_value()
+        logger.info(f"Log in client_id {location.client_id}")
+        client_secret = location.client_secret.get_secret_value()
         token = await get_token(
-            username=location.username,
-            password=password,
             client_id=location.client_id,
+            client_secret=client_secret,
         )
         access_token = token["access_token"]
-        location_id = await get_location(access_token, api_key)
+        user_id = token["user_id"]
+        location_id = await get_location(access_token, location.client_id)
         expires = datetime.now() + timedelta(seconds=int(token["expires_in"]) - 15 * 60)
         return Account(
-            username=location.username,
-            password=password,
+            user_id=user_id,
             location_id=location_id,
             client_id=location.client_id,
-            api_key=api_key,
+            client_secret=client_secret,
             token=access_token,
-            refresh_token=token["refresh_token"],
             expires=expires,
         )
