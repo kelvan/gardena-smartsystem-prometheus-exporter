@@ -4,6 +4,7 @@ from typing import cast
 
 import aiohttp
 import websockets
+from prometheus_client.metrics import Gauge
 
 from ..config import Location
 from ..log import get_logger
@@ -52,8 +53,7 @@ async def get_websocket_uri() -> str:
     raise BaseException("this should be unreachable")
 
 
-async def handle_websocket(attribute_value_metric) -> None:
-    # device_values = get_device_values()
+async def handle_websocket(attribute_value_metric: Gauge, online_metric: Gauge) -> None:
     location = Location()
     account = await AccountStore.get()
     user_id = account.user_id
@@ -64,7 +64,7 @@ async def handle_websocket(attribute_value_metric) -> None:
         label_values = await get_common_values()
         websocket_uri = await get_websocket_uri()
         logger.info("Connecting to Websocket")
-        async with websockets.connect(websocket_uri) as websocket:
+        async with websockets.connect(websocket_uri) as websocket:  # type: ignore[attr-defined]
             logger.info(f"Connected to WebSocket server at {websocket_uri}")
             logger.info("Initial collect")
 
@@ -89,10 +89,14 @@ async def handle_websocket(attribute_value_metric) -> None:
                         logger.debug(f"Available {service_type} resources for {device_id}: {list(values.keys())}")
 
                         if service_type == "COMMON":
-                            new_labels = {label: values.get(to_camel_case(label), {}).get("value") for label in location.common_labels}
+                            new_labels = {
+                                label: values.get(to_camel_case(label), {}).get("value")
+                                for label in location.common_labels
+                            }
                             if label_values.get(device_id) != new_labels:
                                 if label_values.get(device_id):
                                     # this should only be happening if a device gets renamed
+                                    # at the moment we do not get an event for changing names
                                     # clear metric and reconnect to websocket
 
                                     logger.info(
@@ -106,6 +110,17 @@ async def handle_websocket(attribute_value_metric) -> None:
                                     await websocket.close()
                                 else:
                                     label_values[device_id] = new_labels
+
+                            # online metric
+                            if online_state := values.get("rfLinkState", {}).get("value"):
+                                online = int(online_state == "ONLINE")
+                                logger.info(f"{device_id}/{service_type}/rfLinkState -> {online} ({online_state})")
+                                online_metric.labels(
+                                    user_id=user_id,
+                                    location_id=location_id,
+                                    device_id=device_id,
+                                    **label_values[device_id],
+                                ).set(online)
 
                         for attribute, data in values.items():
                             if device_id not in label_values:
@@ -130,6 +145,6 @@ async def handle_websocket(attribute_value_metric) -> None:
                             elif value is None:
                                 logger.warning(f"Missing value for {device_id}/{service_type}/{attribute} -> {value}")
 
-            except websockets.ConnectionClosed:
+            except websockets.ConnectionClosed:  # type: ignore[attr-defined]
                 logger.info("WebSocket connection closed")
                 await sleep(5)

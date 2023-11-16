@@ -20,5 +20,15 @@ async def collect():
             *Location().common_labels,
         ],
     )
+    online_metric = Gauge(
+        "sg_device_attribute_online",
+        "Device online state of Gardena smartsystem devices",
+        [
+            "user_id",
+            "location_id",
+            "device_id",
+            *Location().common_labels,
+        ],
+    )
 
-    await handle_websocket(attribute_value_metric)
+    await handle_websocket(attribute_value_metric, online_metric)
