@@ -8,9 +8,9 @@ logger = get_logger()
 
 
 async def collect():
-    metric = Gauge(
+    attribute_value_metric = Gauge(
         "sg_device_attribute_value",
-        "Value of device attributes",
+        "Value of Gardena smartsystem device attributes",
         [
             "user_id",
             "location_id",
@@ -21,6 +21,4 @@ async def collect():
         ],
     )
 
-    logger.info("Initial collect")
-
-    await handle_websocket(metric)
+    await handle_websocket(attribute_value_metric)

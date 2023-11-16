@@ -32,6 +32,6 @@ class LocationAuth(BaseConfig):  # type: ignore[misc]
 
 class Location(BaseConfig):  # type: ignore[misc]
     auth: LocationAuth
-    common_labels: ClassVar[list[str]] = ["name", "serial", "modelType"]
+    common_labels: ClassVar[list[str]] = ["name", "serial", "model_type"]
 
     CONFIG_SOURCES = FileSource(file=os.environ.get("SGPE_CONFIG_FILE", Path(__file__).parents[1] / "config.yaml"))

@@ -8,7 +8,7 @@ import websockets
 from ..config import Location
 from ..log import get_logger
 from .accounts import AccountStore
-from .values import get_common_values
+from .values import get_common_values, to_camel_case, to_snake_case
 
 base_url = Location().auth.api_base_url
 logger = get_logger()
@@ -52,7 +52,7 @@ async def get_websocket_uri() -> str:
     raise BaseException("this should be unreachable")
 
 
-async def handle_websocket(metric) -> None:
+async def handle_websocket(attribute_value_metric) -> None:
     # device_values = get_device_values()
     location = Location()
     account = await AccountStore.get()
@@ -66,6 +66,7 @@ async def handle_websocket(metric) -> None:
         logger.info("Connecting to Websocket")
         async with websockets.connect(websocket_uri) as websocket:
             logger.info(f"Connected to WebSocket server at {websocket_uri}")
+            logger.info("Initial collect")
 
             try:
                 while True:
@@ -88,7 +89,7 @@ async def handle_websocket(metric) -> None:
                         logger.debug(f"Available {service_type} resources for {device_id}: {list(values.keys())}")
 
                         if service_type == "COMMON":
-                            new_labels = {label: values.get(label, {}).get("value") for label in location.common_labels}
+                            new_labels = {label: values.get(to_camel_case(label), {}).get("value") for label in location.common_labels}
                             if label_values.get(device_id) != new_labels:
                                 if label_values.get(device_id):
                                     # this should only be happening if a device gets renamed
@@ -100,7 +101,7 @@ async def handle_websocket(metric) -> None:
                                     )
                                     label_values[device_id] = new_labels
                                     logger.info("Clearing metric")
-                                    metric.clear()
+                                    attribute_value_metric.clear()
                                     logger.info("Closing websocket")
                                     await websocket.close()
                                 else:
@@ -116,12 +117,12 @@ async def handle_websocket(metric) -> None:
                                 try:
                                     value = float(value)
                                     logger.info(f"{device_id}/{service_type}/{attribute} -> {value}")
-                                    metric.labels(
+                                    attribute_value_metric.labels(
                                         user_id=user_id,
                                         location_id=location_id,
                                         device_id=device_id,
                                         type=service_type,
-                                        attribute=attribute,
+                                        attribute=to_snake_case(attribute),
                                         **label_values[device_id],
                                     ).set(value)
                                 except ValueError as e:

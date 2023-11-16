@@ -10,3 +10,4 @@ mypy_cache/
 .vscode
 *.log
 /*.json
+/*.yaml
