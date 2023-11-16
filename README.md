@@ -11,7 +11,7 @@ This is not an official Gardena project, use at your own risk!
 1.  poetry install --no-root --with dev
 2.  cp config.yaml.example config.yaml
 3.  edit config.yaml
-4.  poetry run uvicorn gardena_smartsystem_prometheus_exporter.serve:app
+4.  poetry run uvicorn gardena_smartsystem_prometheus_exporter.serve:app [--port 8000] [--host 127.0.0.1]
 
 
 ## Config
