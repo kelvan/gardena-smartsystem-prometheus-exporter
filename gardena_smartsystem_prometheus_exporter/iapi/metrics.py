@@ -8,8 +8,9 @@ logger = get_logger()
 
 
 async def collect():
+    prefix = Location().metric_prefix
     attribute_value_metric = Gauge(
-        "sg_device_attribute_value",
+        f"{prefix}_device_attribute_value",
         "Value of Gardena smartsystem device attributes",
         [
             "user_id",
@@ -21,7 +22,7 @@ async def collect():
         ],
     )
     online_metric = Gauge(
-        "sg_device_attribute_online",
+        f"{prefix}_device_attribute_online",
         "Device online state of Gardena smartsystem devices",
         [
             "user_id",

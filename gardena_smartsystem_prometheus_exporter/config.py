@@ -33,5 +33,6 @@ class LocationAuth(BaseConfig):  # type: ignore[misc]
 class Location(BaseConfig):  # type: ignore[misc]
     auth: LocationAuth
     common_labels: ClassVar[list[str]] = ["name", "serial", "model_type"]
+    metric_prefix: str = "gardena_smart"
 
     CONFIG_SOURCES = FileSource(file=os.environ.get("SGPE_CONFIG_FILE", Path(__file__).parents[1] / "config.yaml"))
