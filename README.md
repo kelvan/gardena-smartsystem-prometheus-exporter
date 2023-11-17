@@ -26,3 +26,16 @@ For example to set the log level use `SGPE_LOG_LEVEL`
 
 **Beware:** nested parameters like `SGPE_LOG_FILE.FILENAME` probably won't work when set using `export`,
 defining them in .env or as docker env should work.
+
+
+### Authentication
+
+To get things working you need to create your api credentials on [Husqvarna Devloper Platform](https://developer.husqvarnagroup.cloud/).
+
+1. Login with your gardena credentials
+2. On the `My Applications` page click `NEW APPLICATION`
+3. Provide an application name (e.g. `gardena-smartsystem-prometheus-exporter`)
+4. Click `CONNECT NEW API`
+5. Connect `GARDENA smart system API`
+6. You should now see `GARDENA smart system API` and `Authentication API` under `Connected APIs`
+7. Copy the key and secret to your config.yml
