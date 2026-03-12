@@ -65,7 +65,7 @@ async def handle_websocket(attribute_value_metric: Gauge, online_metric: Gauge) 
             label_values = await get_common_values()
             websocket_uri = await get_websocket_uri()
             logger.info("Connecting to Websocket")
-            async with websockets.connect(websocket_uri) as websocket:  # type: ignore[attr-defined]
+            async with websockets.connect(websocket_uri) as websocket:
                 logger.info(f"Connected to WebSocket server at {websocket_uri}")
                 logger.info("Initial collect")
 
@@ -148,7 +148,7 @@ async def handle_websocket(attribute_value_metric: Gauge, online_metric: Gauge) 
                                         f"Missing value for {device_id}/{service_type}/{attribute} -> {value}"
                                     )
 
-                except websockets.ConnectionClosed:  # type: ignore[attr-defined]
+                except websockets.ConnectionClosed:
                     logger.warning("WebSocket connection closed")
                     await sleep(5)
         except OSError as e:
