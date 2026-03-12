@@ -3,6 +3,7 @@ image: python:3.11
 stages:
   - install
   - qa
+  - build
 
 .install:
   stage: install
@@ -57,3 +58,18 @@ ty:
   allow_failure: true
   dependencies:
     - install:python3.11
+
+pytest:
+  stage: qa
+  script:
+    - pip install uv
+    - uv run pytest tests/ -v
+  dependencies:
+    - install:python3.11
+
+docker:
+  stage: build
+  image: quay.io/podman/stable
+  script:
+    - podman build -t gardena-smartsystem-prometheus-exporter .
+  dependencies: []
