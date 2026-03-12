@@ -27,6 +27,18 @@ install:python3.11:
   extends: .install
   image: python:3.11
 
+install:python3.12:
+  extends: .install
+  image: python:3.12
+
+install:python3.13:
+  extends: .install
+  image: python:3.13
+
+install:python3.14:
+  extends: .install
+  image: python:3.14
+
 ruff:
   stage: qa
   script:
