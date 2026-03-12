@@ -21,7 +21,7 @@ exclude = [
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "A", "B", "N", "UP", "T", "PL", "RUF", "I"]
-ignore = ["PLC1901", "PLR0913", "PLR2004", "PLW2901", "N805", "N999", "A001"]
+ignore = ["PLC1901", "PLR0912", "PLR0913", "PLR0915", "PLR2004", "PLW2901", "N805", "N999", "A001"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["gardena_smartsystem_prometheus_exporter"]
