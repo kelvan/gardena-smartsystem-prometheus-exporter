@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import ClassVar, Optional
+from typing import ClassVar
 
 from ..config import Location
 from ..log import get_logger
@@ -21,7 +21,7 @@ class Account:
 
 
 class AccountStore:
-    _account: ClassVar[Optional[Account]] = None
+    _account: ClassVar[Account | None] = None
 
     @classmethod
     async def get(cls) -> Account:

@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import ClassVar, Literal, Optional, cast
+from typing import ClassVar, Literal, cast
 
 from confz import BaseConfig, EnvSource, FileSource
 from pydantic import HttpUrl, SecretStr
@@ -9,7 +9,7 @@ LOGLEVEL = Literal["CRITICAL", "FATAL", "ERROR", "WARNING", "WARN", "INFO", "DEB
 
 
 class LogFile(BaseConfig):
-    file_name: Optional[str] = None
+    file_name: str | None = None
     rotate: bool = True
     rotate_max_bytes: int = 5242880
     rotate_backup_count: int = 4

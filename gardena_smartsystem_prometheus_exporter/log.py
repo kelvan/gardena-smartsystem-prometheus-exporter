@@ -1,12 +1,11 @@
 import logging
 from logging import handlers
-from typing import Optional
 
 from .config import Log
 
 
 class LogStore:
-    logger: Optional[logging.Logger] = None
+    logger: logging.Logger | None = None
 
 
 def get_logger() -> logging.Logger:

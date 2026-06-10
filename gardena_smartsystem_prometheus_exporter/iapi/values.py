@@ -1,5 +1,5 @@
 import re
-from typing import Union, cast
+from typing import cast
 
 import aiohttp
 
@@ -38,7 +38,7 @@ async def get_common_values() -> dict[str, dict[str, str]]:
         if service.get("type") == "COMMON":
             device_id = cast(str, service["id"])
             label_values[device_id] = {}
-            attributes = cast(dict[str, dict[str, Union[str, float]]], service["attributes"])
+            attributes = cast(dict[str, dict[str, str | float]], service["attributes"])
             for attribute, data in attributes.items():
                 attr = to_snake_case(attribute)
                 if attr in Location().common_labels:
