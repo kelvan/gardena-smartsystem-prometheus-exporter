@@ -1,6 +1,6 @@
 [tool.ruff]
 line-length = 120
-target-version = "py39"
+target-version = "py312"
 
 exclude = [
     ".direnv",
@@ -35,7 +35,7 @@ version = "0.1.0"
 description = ""
 authors = [{name = "Florian Schweikert", email = "kelvan@ist-total.org"}]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 dependencies = [
     "confz>=2.0.0,<3",
     "prometheus-client>=0.17.1,<1",
