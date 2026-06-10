@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import ClassVar
 
-from ..config import Location
+from ..config import location_config
 from ..log import get_logger
 from .auth import get_token
 from .location import get_location
@@ -31,7 +31,7 @@ class AccountStore:
 
     @classmethod
     async def populate(cls) -> Account:
-        location = Location().auth
+        location = location_config().auth
         logger.info(f"Log in client_id {location.client_id}")
         client_secret = location.client_secret.get_secret_value()
         token = await get_token(

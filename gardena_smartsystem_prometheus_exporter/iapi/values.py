@@ -3,12 +3,12 @@ from typing import cast
 
 import aiohttp
 
-from ..config import Location
+from ..config import location_config
 from ..log import get_logger
 from .accounts import AccountStore
 
 logger = get_logger()
-base_url = Location().auth.api_base_url
+base_url = location_config().auth.api_base_url
 re_to_snake_case = re.compile(r"(?<!^)(?=[A-Z])")
 
 
@@ -41,7 +41,7 @@ async def get_common_values() -> dict[str, dict[str, str]]:
             attributes = cast(dict[str, dict[str, str | float]], service["attributes"])
             for attribute, data in attributes.items():
                 attr = to_snake_case(attribute)
-                if attr in Location().common_labels:
+                if attr in location_config().common_labels:
                     value = cast(str, data["value"])
                     label_values[device_id][attr] = value
                     logger.info(f"Found attribute for device '{device_id}': {attr} = '{value}'")

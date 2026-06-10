@@ -6,12 +6,12 @@ import aiohttp
 import websockets
 from prometheus_client.metrics import Gauge
 
-from ..config import Location
+from ..config import location_config
 from ..log import get_logger
 from .accounts import AccountStore
 from .values import get_common_values, to_camel_case, to_snake_case
 
-base_url = Location().auth.api_base_url
+base_url = location_config().auth.api_base_url
 logger = get_logger()
 
 
@@ -54,7 +54,7 @@ async def get_websocket_uri() -> str:
 
 
 async def handle_websocket(attribute_value_metric: Gauge, online_metric: Gauge) -> None:
-    location = Location()
+    location = location_config()
     account = await AccountStore.get()
     user_id = account.user_id
     location_id = None

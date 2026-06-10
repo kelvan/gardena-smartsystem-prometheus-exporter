@@ -2,10 +2,10 @@ from typing import cast
 
 import aiohttp
 
-from ..config import Location
+from ..config import location_config
 from ..log import get_logger
 
-url = str(Location().auth.auth_url)
+url = str(location_config().auth.auth_url)
 logger = get_logger()
 
 

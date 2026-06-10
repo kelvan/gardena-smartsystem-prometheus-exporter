@@ -2,9 +2,9 @@ from typing import cast
 
 import aiohttp
 
-from ..config import Location
+from ..config import location_config
 
-base_url = Location().auth.api_base_url
+base_url = location_config().auth.api_base_url
 
 
 async def get_location(token: str, client_id: str) -> str:

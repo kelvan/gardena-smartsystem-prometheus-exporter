@@ -36,3 +36,7 @@ class Location(BaseConfig):
     metric_prefix: str = "gardena_smart"
 
     CONFIG_SOURCES = FileSource(file=os.environ.get("SGPE_CONFIG_FILE", Path(__file__).parents[1] / "config.yaml"))
+
+
+def location_config() -> Location:
+    return Location()  # ty: ignore[missing-argument]

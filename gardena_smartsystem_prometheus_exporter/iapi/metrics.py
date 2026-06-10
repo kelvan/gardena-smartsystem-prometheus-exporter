@@ -1,6 +1,6 @@
 from prometheus_client.metrics import Gauge
 
-from ..config import Location
+from ..config import location_config
 from ..log import get_logger
 from .websocket import handle_websocket
 
@@ -8,7 +8,7 @@ logger = get_logger()
 
 
 async def collect():
-    prefix = Location().metric_prefix
+    prefix = location_config().metric_prefix
     attribute_value_metric = Gauge(
         f"{prefix}_device_attribute_value",
         "Value of Gardena smartsystem device attributes",
@@ -18,7 +18,7 @@ async def collect():
             "device_id",
             "type",
             "attribute",
-            *Location().common_labels,
+            *location_config().common_labels,
         ],
     )
     online_metric = Gauge(
@@ -28,7 +28,7 @@ async def collect():
             "user_id",
             "location_id",
             "device_id",
-            *Location().common_labels,
+            *location_config().common_labels,
         ],
     )
 
